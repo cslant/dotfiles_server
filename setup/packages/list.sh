@@ -9,10 +9,25 @@ if [ "" = "$PKG_OK" ]; then
 fi
 
 echo "=========================== zsh ==========================="
-bash zsh.sh
+while true; do
+    if [[ $ACCEPT_INSTALL =~ ^[Yy]$ ]]; then
+        yn="y"
+    else
+        read -r -p "Do you want to install zsh and oh-my-zsh? (Y/N)  " yn
+    fi
+    case $yn in
+    [Yy]*)
+        bash zsh.sh
+        break
+        ;;
+    [Nn]*) break ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+done
+
 
 installPackages() {
-    PACKAGE_LIST=("curl" "wget" "vim" "tmux" "nano" "npm" "certbot" "python3-certbot-nginx" "fail2ban" "htop" "btop")
+    PACKAGE_LIST=("curl" "wget" "make" "vim" "tmux" "nano" "npm" "certbot" "python3-certbot-nginx" "fail2ban" "htop" "btop")
 
     for packageName in "${PACKAGE_LIST[@]}"; do
         echo "=========================== $packageName ==========================="
@@ -21,7 +36,7 @@ installPackages() {
         echo "Checking for $packageName: $PKG_OK"
         if [ "" = "$PKG_OK" ]; then
             echo "No $packageName. Setting up $packageName."
-            sudo apt-get install -y "$packageName"
+            sudo apt install -y "$packageName"
         fi
         echo ""
     done

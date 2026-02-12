@@ -51,10 +51,17 @@ sudo sed -i '/Auto logout after/d' /etc/zsh/zshenv 2>/dev/null
 sudo sed -i '/Auto logout after/d' /etc/zsh/zshrc 2>/dev/null
 
 # Add to /etc/zsh/zshenv ONLY (loaded first for all zsh sessions)
-sudo tee -a /etc/zsh/zshenv > /dev/null <<EOF
+sudo tee -a /etc/zsh/zshenv > /dev/null <<'EOF'
 
 # Auto logout after 5 minutes of inactivity
-TMOUT=$TIMEOUT_SECONDS
+TMOUT=300
+
+# Custom message before logout for ZSH
+TRAPALRM() {
+    print '\n👋 Hi, timed out waiting for input, bye!'
+    kill -HUP $$
+}
+
 readonly TMOUT
 export TMOUT
 EOF

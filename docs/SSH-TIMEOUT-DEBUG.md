@@ -1,24 +1,24 @@
-# Hướng dẫn Debug SSH Auto-Logout
+# SSH Auto-Logout Debug Guide
 
-## Vấn đề: SSH không tự động logout sau 5 phút
+## Problem: SSH does not auto logout after 5 minutes
 
-### Bước 1: Kiểm tra cấu hình hiện tại
+### Step 1: Check current configuration
 
-Chạy script verify:
+Run the verify script:
 ```bash
 bash /path/to/setup/system/verify-ssh-timeout.sh
 ```
 
-Hoặc kiểm tra thủ công:
+Or check manually:
 ```bash
 grep -E "^ClientAlive" /etc/ssh/sshd_config
 ```
 
-### Bước 2: Các nguyên nhân thường gặp
+### Step 2: Common causes
 
-#### ✅ Nguyên nhân 1: ssh.socket đang override cấu hình
-**Triệu chứng:** Port trong sshd_config không có hiệu lực
-**Giải pháp:**
+#### ✅ Cause 1: ssh.socket is overriding configuration
+**Symptom:** Port in sshd_config has no effect
+**Solution:**
 ```bash
 sudo systemctl stop ssh.socket
 sudo systemctl disable ssh.socket
@@ -26,13 +26,13 @@ sudo systemctl daemon-reload
 sudo systemctl restart ssh
 ```
 
-#### ✅ Nguyên nhân 2: Cấu hình bị duplicate hoặc comment
-**Kiểm tra:**
+#### ✅ Cause 2: Duplicate or commented configuration
+**Check:**
 ```bash
 grep -n "ClientAlive" /etc/ssh/sshd_config
 ```
 
-**Giải pháp:** Xóa tất cả dòng cũ và thêm lại:
+**Solution:** Remove all old lines and add again:
 ```bash
 sudo sed -i '/^ClientAliveInterval/d' /etc/ssh/sshd_config
 sudo sed -i '/^ClientAliveCountMax/d' /etc/ssh/sshd_config
@@ -41,76 +41,76 @@ echo 'ClientAliveCountMax 5' | sudo tee -a /etc/ssh/sshd_config
 sudo systemctl restart ssh
 ```
 
-#### ✅ Nguyên nhân 3: Client SSH có keepalive riêng
-**Triệu chứng:** Mac/Windows Terminal tự động gửi keepalive
-**Kiểm tra client:**
+#### ✅ Cause 3: SSH client has its own keepalive
+**Symptom:** Mac/Windows Terminal automatically sends keepalive
+**Check client:**
 - Mac/Linux: `cat ~/.ssh/config | grep ServerAlive`
-- Windows: Kiểm tra PuTTY/Terminal settings
+- Windows: Check PuTTY/Terminal settings
 
-**Giải pháp:** Tắt keepalive ở client hoặc giảm thời gian timeout xuống:
+**Solution:** Disable keepalive on client or reduce server timeout:
 ```bash
-# Server side - giảm xuống 3 phút để test
+# Server side - reduce to 3 minutes for testing
 ClientAliveInterval 30
 ClientAliveCountMax 6
-# = 30s × 6 = 180s (3 phút)
+# = 30s × 6 = 180s (3 minutes)
 ```
 
-#### ✅ Nguyên nhân 4: Service chưa restart đúng cách
-**Giải pháp:**
+#### ✅ Cause 4: Service not restarted properly
+**Solution:**
 ```bash
-# Kiểm tra service name
+# Check service name
 systemctl list-units | grep ssh
 
-# Restart đúng service
-sudo systemctl restart sshd  # hoặc
+# Restart the correct service
+sudo systemctl restart sshd  # or
 sudo systemctl restart ssh
 
 # Verify
 sudo systemctl status sshd --no-pager
 ```
 
-### Bước 3: Test timeout
+### Step 3: Test timeout
 
-**Test 1: Kiểm tra config có load không**
+**Test 1: Check if config is loaded**
 ```bash
 sudo sshd -T | grep clientalive
 ```
-Kết quả mong đợi:
+Expected result:
 ```
 clientaliveinterval 60
 clientalivecountmax 5
 ```
 
-**Test 2: Mở session mới và chờ**
-1. Giữ session hiện tại
-2. Mở terminal mới: `ssh user@server`
-3. Không làm gì trong 5 phút
-4. Session mới phải tự động ngắt
+**Test 2: Open a new session and wait**
+1. Keep the current session open
+2. Open a new terminal: `ssh user@server`
+3. Do nothing for 5 minutes
+4. The new session should auto disconnect
 
-**Test 3: Kiểm tra log**
+**Test 3: Check logs**
 ```bash
-# Xem SSH log realtime
+# View SSH log in realtime
 sudo tail -f /var/log/auth.log | grep sshd
 
-# Hoặc
+# Or
 sudo journalctl -u ssh -f
 ```
 
-### Bước 4: Troubleshooting nâng cao
+### Step 4: Advanced troubleshooting
 
-#### Kiểm tra tất cả process liên quan:
+#### Check all related processes:
 ```bash
 ps aux | grep sshd
 sudo ss -tlnp | grep ssh
 ```
 
-#### Kiểm tra Drop-in configs:
+#### Check Drop-in configs:
 ```bash
 ls -la /etc/ssh/sshd_config.d/
 cat /etc/ssh/sshd_config.d/*.conf 2>/dev/null
 ```
 
-#### Reset hoàn toàn:
+#### Full reset:
 ```bash
 # Backup
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
@@ -133,40 +133,39 @@ sudo systemctl daemon-reload
 sudo systemctl restart ssh
 ```
 
-### Bước 5: Nếu vẫn không work
+### Step 5: If still not working
 
-Thử với TCPKeepAlive (khác với ClientAlive):
+Try with TCPKeepAlive (different from ClientAlive):
 ```bash
 echo 'TCPKeepAlive yes' | sudo tee -a /etc/ssh/sshd_config
 sudo systemctl restart ssh
 ```
 
-Hoặc sử dụng cấu hình aggressive hơn:
+Or use a more aggressive configuration:
 ```bash
 ClientAliveInterval 30
 ClientAliveCountMax 3
-# = 30s × 3 = 90s (1.5 phút timeout)
+# = 30s × 3 = 90s (1.5 minutes timeout)
 ```
 
-### ⚠️ LƯU Ý QUAN TRỌNG
+### ⚠️ IMPORTANT NOTES
 
-1. **Luôn giữ session hiện tại mở** khi test để tránh bị lock khỏi server
-2. **Test với session mới** trước khi đóng session cũ
-3. **Firewall** có thể giữ connection alive, kiểm tra:
+1. **Always keep the current session open** when testing to avoid locking yourself out
+2. **Test with a new session** before closing the old one
+3. **Firewall** may keep the connection alive, check with:
    ```bash
    sudo iptables -L -n -v | grep ESTABLISHED
    ```
-4. **Client-side keepalive** có thể override server config
+4. **Client-side keepalive** may override server config
 
-### Script tự động fix tất cả
+### Auto-fix script
 
-Chạy lại script setup với force:
+Rerun the setup script with force:
 ```bash
 sudo bash /path/to/setup/system/ssh_timeout.sh
 ```
 
-Sau đó verify:
+Then verify:
 ```bash
 bash /path/to/setup/system/verify-ssh-timeout.sh
 ```
-

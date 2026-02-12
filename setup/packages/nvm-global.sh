@@ -81,10 +81,16 @@ export NVM_DIR="/usr/local/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 # Install latest LTS Node.js version
-echo ""
-echo "Installing latest LTS Node.js version..."
 if command -v nvm &>/dev/null; then
-    nvm install --lts
+    echo "Installing latest LTS Node.js version..."
+    if ! nvm install --lts --reinstall-packages-from=current; then
+        echo "Cleaning up existing Node.js installation directories..."
+        NODE_VERSION=$(nvm version-remote --lts)
+        if [ -d "$NVM_DIR/versions/node/$NODE_VERSION" ]; then
+            sudo rm -rf "$NVM_DIR/versions/node/$NODE_VERSION"
+        fi
+        nvm install --lts
+    fi
     nvm use --lts
     nvm alias default 'lts/*'
 
@@ -200,4 +206,3 @@ echo "   nvm --version"
 echo "   node --version"
 echo "   npm --version"
 echo ""
-

@@ -1,7 +1,7 @@
 # Makefile for dotfiles_server
 # Quick shortcuts for all installation commands
 
-.PHONY: help setup ssh-port ssh-timeout php php-ext lazydocker \
+.PHONY: help setup ssh-port ssh-timeout hostname php php-ext lazydocker \
         global-dev add-user zabbix-server zabbix-client update-zabbix-ip \
         fix-mysql clean
 
@@ -14,9 +14,10 @@ help:
 	@echo "Usage: make <command>"
 	@echo ""
 	@echo "System Setup:"
-	@echo "  make setup              - Setup the server"
-	@echo "  make ssh-port PORT=XXXX - Change SSH port (default: 22)"
-	@echo "  make ssh-timeout        - Configure SSH timeout (5min auto-disconnect)"
+	@echo "  make setup                - Setup the server"
+	@echo "  make ssh-port PORT=XXXX   - Change SSH port (default: 22)"
+	@echo "  make ssh-timeout          - Configure SSH timeout (5min auto-disconnect)"
+	@echo "  make hostname NAME=server - Change system hostname"
 	@echo ""
 	@echo "PHP & Development:"
 	@echo "  make php                - Install PHP"
@@ -40,6 +41,7 @@ help:
 	@echo "Examples:"
 	@echo "  make setup"
 	@echo "  make ssh-port PORT=19742"
+	@echo "  make hostname NAME=myserver"
 	@echo "  make php-ext VER=8.4"
 	@echo "  make global-dev-force"
 	@echo "  make add-user USER=john"
@@ -61,6 +63,13 @@ ssh-port:
 
 ssh-timeout:
 	@bash install.sh ssh_timeout
+
+hostname:
+	@if [ -z "$(NAME)" ]; then \
+		sudo bash install.sh hostname; \
+	else \
+		sudo bash install.sh hostname $(NAME); \
+	fi
 
 # PHP & Development
 php:
@@ -128,6 +137,7 @@ clean:
 s: setup
 sp: ssh-port
 st: ssh-timeout
+hn: hostname
 p: php
 pe: php-ext
 ld: lazydocker
@@ -146,6 +156,7 @@ shortcuts:
 	@echo "  s   = setup"
 	@echo "  sp  = ssh-port"
 	@echo "  st  = ssh-timeout"
+	@echo "  hn  = hostname"
 	@echo "  p   = php"
 	@echo "  pe  = php-ext"
 	@echo "  ld  = lazydocker"
@@ -161,6 +172,7 @@ shortcuts:
 	@echo "Examples:"
 	@echo "  make s"
 	@echo "  make sp PORT=19742"
+	@echo "  make hn NAME=myserver"
 	@echo "  make pe VER=8.4"
 	@echo "  make gdf"
 	@echo "  make au USER=john"
