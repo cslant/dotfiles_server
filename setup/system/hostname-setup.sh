@@ -70,7 +70,7 @@ while true; do
         echo "2️⃣ Updating /etc/hosts..."
 
         # Backup /etc/hosts
-        sudo cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d%H%M%S)
+        sudo cp /etc/hosts "/etc/hosts.backup.$(date +%Y%m%d%H%M%S)"
 
         # Replace old hostname with new hostname in /etc/hosts
         # Handle both 127.0.1.1 format and other variations
