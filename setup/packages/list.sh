@@ -27,7 +27,7 @@ done
 
 
 installPackages() {
-    PACKAGE_LIST=("curl" "wget" "vim" "tmux" "nano" "npm" "certbot" "python3-certbot-nginx" "fail2ban" "htop" "btop")
+    PACKAGE_LIST=("curl" "wget" "make" "vim" "tmux" "nano" "npm" "certbot" "python3-certbot-nginx" "fail2ban" "htop" "btop")
 
     for packageName in "${PACKAGE_LIST[@]}"; do
         echo "=========================== $packageName ==========================="
@@ -36,7 +36,7 @@ installPackages() {
         echo "Checking for $packageName: $PKG_OK"
         if [ "" = "$PKG_OK" ]; then
             echo "No $packageName. Setting up $packageName."
-            sudo apt-get install -y "$packageName"
+            sudo apt install -y "$packageName"
         fi
         echo ""
     done

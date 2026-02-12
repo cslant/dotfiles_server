@@ -96,6 +96,11 @@ fix_mysql_frozen() {
     sudo bash fix-mysql-frozen.sh
 }
 
+hostname_setup() {
+    cd "$CURRENT_DIR/setup/system" || exit
+    sudo bash hostname-setup.sh "$@"
+}
+
 usage() {
     echo "Usage: bash $0 [command] [args]"
     echo ''
@@ -111,6 +116,7 @@ usage() {
     echo '  zabbix_server   Install Zabbix Server (auto-detect Nginx/Apache)'
     echo '  zabbix_client   Install Zabbix Agent (client) [server_ip]'
     echo '  update_zabbix_ip Update Zabbix Server IP for installed agent [new_ip]'
+    echo '  hostname        Change system hostname [new_hostname]'
     echo '  fix_mysql       Fix MySQL frozen issue after MariaDB to MySQL migration'
     echo ''
     echo 'Args for global_dev:'
@@ -132,6 +138,9 @@ usage() {
     echo 'Args for update_zabbix_ip:'
     echo '  [new_ip]        New Zabbix Server IP (optional, will prompt if not provided)'
     echo ''
+    echo 'Args for hostname:'
+    echo '  [new_hostname]  New hostname (optional, will prompt if not provided)'
+    echo ''
     echo 'Example:'
     echo "  bash $0 setup"
     echo "  bash $0 ssh_port 12345"
@@ -149,6 +158,8 @@ usage() {
     echo "  bash $0 zabbix_client 192.168.1.100"
     echo "  bash $0 update_zabbix_ip"
     echo "  bash $0 update_zabbix_ip 192.168.1.200"
+    echo "  bash $0 hostname"
+    echo "  bash $0 hostname myserver"
     echo "  bash $0 fix_mysql"
     echo ''
 }
@@ -200,6 +211,11 @@ case "${1:-}" in
 
     fix_mysql | fix_mysql_frozen | fmf)
         fix_mysql_frozen
+        ;;
+
+    hostname | hn)
+        shift # Remove command name
+        hostname_setup "$@"
         ;;
 
     *)
