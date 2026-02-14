@@ -224,3 +224,10 @@ case "${1:-}" in
         ;;
 esac
 
+# Run enable ssh service at the end to avoid ssh connection lost when changing ssh port if user forgets to enable ssh service after changing port
+# Enable ssh service also if ssh is disabled
+if ! systemctl is-enabled ssh >/dev/null 2>&1; then
+    echo "Enabling SSH service..."
+    sudo systemctl enable ssh
+    echo "✓ SSH service enabled"
+fi
