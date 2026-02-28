@@ -9,8 +9,13 @@ echo '####################################################################'
 echo '####################################################################'
 echo ''
 echo "=========================== update ==========================="
-sudo apt-get -y update
-sudo apt-get -y upgrade
+if groups "$USER" | grep -q "\bsudo\b"; then
+    echo "User $USER is in the sudo group. Proceeding with update and upgrade."
+    sudo apt-get -y update
+    sudo apt-get -y upgrade
+else
+    echo "User $USER is not in the sudo group. Skipping update and upgrade."
+fi
 
 echo '####################################################################'
 echo '######################### Run package list #########################'
@@ -40,13 +45,19 @@ while true; do
     esac
 done
 
-echo '####################################################################'
-echo '############################# System ###############################'
-echo '####################################################################'
-echo ''
-cd "$THIS_DIR"/setup/system || exit
-bash setup.sh
-bash change-port.sh
+# CHeck and skip system if have not group sudo
+if groups "$USER" | grep -q "\bsudo\b"; then
+     echo "User $USER is in the sudo group. Proceeding with system setup."
+     echo '####################################################################'
+     echo '############################# System ###############################'
+     echo '####################################################################'
+     echo ''
+     cd "$THIS_DIR"/setup/system || exit
+     bash setup.sh
+     bash change-port.sh
+else
+     echo "User $USER is not in the sudo group. Skipping system setup."
+fi
 
 echo ''
 echo '####################################################################'
@@ -59,6 +70,13 @@ bash after-setup.sh
 echo "####################################################################"
 echo "######################### install docker ###########################"
 while true; do
+    if groups "$USER" | grep -q "\bsudo\b"; then
+        echo "User $USER is in the sudo group. Proceeding with docker installation."
+    else
+        echo "User $USER is not in the sudo group. Skipping docker installation."
+        break
+    fi
+
     if [[ $ACCEPT_INSTALL =~ ^[Yy]$ ]]; then
         yn="y"
     else
