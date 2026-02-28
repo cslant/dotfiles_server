@@ -34,19 +34,61 @@ installPackages() {
 
         PKG_OK=$(dpkg-query -W --showformat='${Status}\n' "$packageName" | grep "install ok installed")
         echo "Checking for $packageName: $PKG_OK"
-        if [ "" = "$PKG_OK" ]; then
-            echo "No $packageName. Setting up $packageName."
-            sudo apt install -y "$packageName"
-        fi
-        echo ""
+        while true; do
+            if [[ $ACCEPT_INSTALL =~ ^[Yy]$ ]]; then
+                yn="y"
+            else
+                read -r -p "Do you want to install $packageName? (Y/N)  " yn
+            fi
+            case $yn in
+            [Yy]*)
+                if [ "" = "$PKG_OK" ]; then
+                    echo "No $packageName. Setting up $packageName."
+                    sudo apt install -y "$packageName"
+                fi
+                echo ""
+                break
+                ;;
+            [Nn]*) break ;;
+            *) echo "Please answer yes or no." ;;
+            esac
+        done
     done
 }
 installPackages
 
 echo "=========================== nvm ==========================="
-bash nvm.sh
+while true; do
+    if [[ $ACCEPT_INSTALL =~ ^[Yy]$ ]]; then
+        yn="y"
+    else
+        read -r -p "Do you want to install nvm? (Y/N)  " yn
+    fi
+    case $yn in
+    [Yy]*)
+        bash nvm.sh
+        break
+        ;;
+    [Nn]*) break ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+done
 echo ""
 
 echo "====================== redis-server ======================="
-bash redis.sh
+while true; do
+    if [[ $ACCEPT_INSTALL =~ ^[Yy]$ ]]; then
+        yn="y"
+    else
+        read -r -p "Do you want to install redis-server? (Y/N)  " yn
+    fi
+    case $yn in
+    [Yy]*)
+        bash redis.sh
+        break
+        ;;
+    [Nn]*) break ;;
+    *) echo "Please answer yes or no." ;;
+    esac
+done
 echo ""
