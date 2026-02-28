@@ -35,6 +35,11 @@ installPackages() {
         PKG_OK=$(dpkg-query -W --showformat='${Status}\n' "$packageName" | grep "install ok installed")
         echo "Checking for $packageName: $PKG_OK"
         while true; do
+            if [[ -n $PKG_OK ]]; then
+                echo "$packageName is already installed."
+                echo ""
+                break
+            fi
             if [[ $ACCEPT_INSTALL =~ ^[Yy]$ ]]; then
                 yn="y"
             else
