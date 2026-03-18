@@ -27,6 +27,8 @@ bash install.sh pe 8.4       # Short version
 ```bash
 bash install.sh lazydocker   # Install lazydocker
 bash install.sh ld           # Short version
+
+bash install.sh docker         # Install Docker & Docker Compose (with optional lazydocker)
 ```
 
 ## 🌍 Global Development Environment
@@ -87,6 +89,7 @@ This fixes the issue when downgrading from MariaDB to MySQL.
 | `php` | - | Install PHP |
 | `php_extension` | `pe` | Install PHP extensions |
 | `lazydocker` | `ld` | Install lazydocker |
+| `docker` | - | Install Docker & Docker Compose (with optional lazydocker) |
 | `global_dev` | `gd` | Global dev environment |
 | `zabbix_server` | `zs` | Install Zabbix Server |
 | `zabbix_client` | `zc` | Install Zabbix Agent |

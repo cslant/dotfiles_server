@@ -51,6 +51,11 @@ lazydocker() {
     bash lazydocker.sh
 }
 
+docker_setup() {
+    cd "$CURRENT_DIR/setup/develop" || exit
+    bash docker.sh
+}
+
 global_dev_setup() {
     cd "$CURRENT_DIR/setup/packages" || exit
     if [ "${2:-}" = "-f" ] || [ "${2:-}" = "--force" ]; then
@@ -111,6 +116,7 @@ usage() {
     echo '  php             Install php'
     echo '  php_extension   Install php extension'
     echo '  lazydocker      Install lazydocker'
+    echo '  docker          Install Docker & Docker Compose (with optional lazydocker)'
     echo '  global_dev      Setup NVM, NPM, Yarn, ZSH globally for all users'
     echo '  add_dev_user    Add user(s) to developers group for NVM/NPM/Yarn access'
     echo '  zabbix_server   Install Zabbix Server (auto-detect Nginx/Apache)'
@@ -161,6 +167,7 @@ usage() {
     echo "  bash $0 hostname"
     echo "  bash $0 hostname myserver"
     echo "  bash $0 fix_mysql"
+    echo "  bash $0 docker"
     echo ''
 }
 
@@ -187,6 +194,10 @@ case "${1:-}" in
 
     lazydocker | ld)
         lazydocker
+        ;;
+
+    docker)
+        docker_setup
         ;;
 
     global_dev | gd)
