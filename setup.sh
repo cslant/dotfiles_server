@@ -9,7 +9,12 @@ echo '####################################################################'
 echo '####################################################################'
 echo ''
 echo "=========================== update ==========================="
-if groups "$USER" | grep -q "\bsudo\b"; then
+# check root user right? if not, check group sudo, if have, run update and upgrade, if not, skip
+if [ "$EUID" -eq 0 ]; then
+    echo "Running as root user. Proceeding with update and upgrade."
+    apt-get -y update
+    apt-get -y upgrade
+elif groups "$USER" | grep -q "\bsudo\b"; then
     echo "User $USER is in the sudo group. Proceeding with update and upgrade."
     sudo apt-get -y update
     sudo apt-get -y upgrade
