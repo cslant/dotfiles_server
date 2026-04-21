@@ -56,6 +56,15 @@ docker_setup() {
     bash docker.sh
 }
 
+zsh_global_setup() {
+    cd "$CURRENT_DIR/setup/packages" || exit
+    if [ "${2:-}" = "-f" ] || [ "${2:-}" = "--force" ]; then
+        bash zsh-global.sh --force
+    else
+        bash zsh-global.sh
+    fi
+}
+
 global_dev_setup() {
     cd "$CURRENT_DIR/setup/packages" || exit
     if [ "${2:-}" = "-f" ] || [ "${2:-}" = "--force" ]; then
@@ -106,6 +115,11 @@ hostname_setup() {
     sudo bash hostname-setup.sh "$@"
 }
 
+ufw_setup() {
+    cd "$CURRENT_DIR/setup/system" || exit
+    sudo bash ufw-setup.sh "${2:-}"
+}
+
 usage() {
     echo "Usage: bash $0 [command] [args]"
     echo ''
@@ -117,8 +131,10 @@ usage() {
     echo '  php_extension   Install php extension'
     echo '  lazydocker      Install lazydocker'
     echo '  docker          Install Docker & Docker Compose (with optional lazydocker)'
+    echo '  zsh_global      Setup ZSH globally for all users (standalone)'
     echo '  global_dev      Setup NVM, NPM, Yarn, ZSH globally for all users'
     echo '  add_dev_user    Add user(s) to developers group for NVM/NPM/Yarn access'
+    echo '  ufw_setup       Install and configure UFW firewall [ssh_port]'
     echo '  zabbix_server   Install Zabbix Server (auto-detect Nginx/Apache)'
     echo '  zabbix_client   Install Zabbix Agent (client) [server_ip]'
     echo '  update_zabbix_ip Update Zabbix Server IP for installed agent [new_ip]'
@@ -128,9 +144,15 @@ usage() {
     echo 'Args for global_dev:'
     echo '  -f, --force     Force copy/update dotfiles to all existing users'
     echo ''
+    echo 'Args for zsh_global:'
+    echo '  -f, --force     Force copy/update ZSH dotfiles to all existing users'
+    echo ''
     echo 'Args for add_dev_user:'
     echo '  <username>      Username(s) to add to developers group'
     echo '  --all, -a       Add all non-system users to developers group'
+    echo ''
+    echo 'Args for ufw_setup:'
+    echo '  [ssh_port]      SSH port to allow (default: detected from sshd_config or 22)'
     echo ''
     echo 'Args for ssh_port:'
     echo '  [port]          New ssh port (valid port number)'
@@ -154,11 +176,15 @@ usage() {
     echo "  bash $0 php"
     echo "  bash $0 php_extension 8.4"
     echo "  bash $0 lazydocker"
+    echo "  bash $0 zsh_global"
+    echo "  bash $0 zsh_global --force"
     echo "  bash $0 global_dev"
     echo "  bash $0 global_dev -f"
     echo "  bash $0 add_dev_user john"
     echo "  bash $0 add_dev_user john mary bob"
     echo "  bash $0 add_dev_user --all"
+    echo "  bash $0 ufw_setup"
+    echo "  bash $0 ufw_setup 19742"
     echo "  bash $0 zabbix_server"
     echo "  bash $0 zabbix_client"
     echo "  bash $0 zabbix_client 192.168.1.100"
@@ -200,12 +226,20 @@ case "${1:-}" in
         docker_setup
         ;;
 
+    zsh_global | zg)
+        zsh_global_setup "$@"
+        ;;
+
     global_dev | gd)
         global_dev_setup "$@"
         ;;
 
     add_dev_user | adu)
         add_dev_user "$@"
+        ;;
+
+    ufw_setup | ufw)
+        ufw_setup "$@"
         ;;
 
     zabbix_server | zs)

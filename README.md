@@ -55,8 +55,10 @@ make s
 | `make setup` | Setup the server | `make s` |
 | `make ssh-port PORT=XXXX` | Change SSH port | `make sp PORT=XXXX` |
 | `make ssh-timeout` | Configure SSH timeout | `make st` |
+| `make ufw-setup SSH_PORT=XXXX` | Install/configure UFW | `make ufw SSH_PORT=XXXX` |
 | `make php` | Install PHP | `make p` |
 | `make php-ext VER=X.X` | Install PHP extensions | `make pe VER=X.X` |
+| `make zsh-global` | Setup only ZSH global | `make zg` |
 | `make global-dev` | Setup NVM, NPM, Yarn, ZSH | `make gd` |
 | `make add-user USER=name` | Add user to developers group | `make au USER=name` |
 | `make zabbix-server` | Install Zabbix Server | `make zs` |
@@ -67,6 +69,8 @@ make s
 ```bash
 make setup
 make ssh-port PORT=19742
+make ufw-setup SSH_PORT=19742
+make zsh-global
 make global-dev
 make add-user USER=john
 make zabbix-client IP=192.168.1.100
@@ -83,15 +87,51 @@ The runner has the following commands:
 | `setup`, `s`, `a`         | Setup the server                                        |
 | `ssh_port`, `sp`          | Change the SSH port                                     |
 | `ssh_timeout`, `st`       | Configure SSH timeout (auto disconnect after 5min idle) |
+| `ufw_setup`, `ufw`        | Install and configure UFW firewall                      |
 | `php`, `php-install`      | Install PHP version you want                            |
 | `php_extension`, `pe`     | Install PHP extensions                                  |
 | `lazydocker`, `ld`        | Install lazydocker                                      |
+| `zsh_global`, `zg`        | Setup ZSH globally (standalone)                         |
 | `global_dev`, `gd`        | Setup NVM, NPM, Yarn, ZSH globally for all users        |
 | `add_dev_user`, `adu`     | Add user(s) to developers group for dev tools access    |
 | `zabbix_server`, `zs`     | Install Zabbix Server with auto web server detection    |
 | `zabbix_client`, `zc`     | Install Zabbix Agent (client)                           |
 | `update_zabbix_ip`, `uzi` | Update Zabbix Server IP for installed agent             |
 | `fix_mysql`, `fmf`        | Fix MySQL FROZEN issue (when downgrading from MariaDB)  |
+
+### Standalone ZSH Global Setup
+
+Setup only ZSH + Oh-My-Zsh globally (without NVM/Yarn):
+
+```bash
+sudo bash install.sh zsh_global
+# or
+sudo bash install.sh zg
+```
+
+Force update dotfiles for all existing users:
+
+```bash
+sudo bash install.sh zsh_global --force
+```
+
+### UFW Setup
+
+Install and configure UFW firewall with safe defaults:
+
+```bash
+# Auto-detect SSH port from sshd_config (fallback 22)
+sudo bash install.sh ufw_setup
+
+# Or set SSH port manually
+sudo bash install.sh ufw_setup 19742
+```
+
+This command will:
+- ✓ Install UFW (if missing)
+- ✓ Set default deny incoming / allow outgoing
+- ✓ Allow SSH port, 80/tcp, and 443/tcp
+- ✓ Enable and reload firewall
 
 ### Global Dev Setup
 

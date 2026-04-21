@@ -50,8 +50,8 @@ while true; do
     esac
 done
 
-# CHeck and skip system if have not group sudo
-if groups "$USER" | grep -q "\bsudo\b"; then
+# CHeck and skip system if have not group sudo or root user
+if [ "$EUID" -eq 0 ] || groups "$USER" | grep -q "\bsudo\b"; then
      echo "User $USER is in the sudo group. Proceeding with system setup."
      echo '####################################################################'
      echo '############################# System ###############################'
@@ -75,7 +75,7 @@ bash after-setup.sh
 echo "####################################################################"
 echo "######################### install docker ###########################"
 while true; do
-    if groups "$USER" | grep -q "\bsudo\b"; then
+    if [ "$EUID" -eq 0 ] || groups "$USER" | grep -q "\bsudo\b"; then
         echo "User $USER is in the sudo group. Proceeding with docker installation."
     else
         echo "User $USER is not in the sudo group. Skipping docker installation."

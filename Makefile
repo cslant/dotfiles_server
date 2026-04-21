@@ -1,9 +1,9 @@
 # Makefile for dotfiles_server
 # Quick shortcuts for all installation commands
 
-.PHONY: help setup ssh-port ssh-timeout hostname php php-ext lazydocker \
-        global-dev add-user zabbix-server zabbix-client update-zabbix-ip \
-        fix-mysql clean
+.PHONY: help setup ssh-port ssh-timeout hostname ufw-setup php php-ext lazydocker \
+        zsh-global zsh-global-force global-dev add-user zabbix-server \
+        zabbix-client update-zabbix-ip fix-mysql clean
 
 # Default target - show help
 help:
@@ -18,6 +18,7 @@ help:
 	@echo "  make ssh-port PORT=XXXX   - Change SSH port (default: 22)"
 	@echo "  make ssh-timeout          - Configure SSH timeout (5min auto-disconnect)"
 	@echo "  make hostname NAME=server - Change system hostname"
+	@echo "  make ufw-setup SSH_PORT=XXXX - Install & configure UFW firewall"
 	@echo ""
 	@echo "PHP & Development:"
 	@echo "  make php                - Install PHP"
@@ -25,6 +26,8 @@ help:
 	@echo "  make lazydocker         - Install lazydocker"
 	@echo ""
 	@echo "Global Dev Environment:"
+	@echo "  make zsh-global         - Setup ZSH globally only"
+	@echo "  make zsh-global-force   - Force update ZSH dotfiles for all users"
 	@echo "  make global-dev         - Setup NVM, NPM, Yarn, ZSH globally"
 	@echo "  make global-dev-force   - Force update for all existing users"
 	@echo "  make add-user USER=name - Add user to developers group"
@@ -42,6 +45,7 @@ help:
 	@echo "  make setup"
 	@echo "  make ssh-port PORT=19742"
 	@echo "  make hostname NAME=myserver"
+	@echo "  make ufw-setup SSH_PORT=19742"
 	@echo "  make php-ext VER=8.4"
 	@echo "  make global-dev-force"
 	@echo "  make add-user USER=john"
@@ -71,6 +75,13 @@ hostname:
 		sudo bash install.sh hostname $(NAME); \
 	fi
 
+ufw-setup:
+	@if [ -z "$(SSH_PORT)" ]; then \
+		sudo bash install.sh ufw_setup; \
+	else \
+		sudo bash install.sh ufw_setup $(SSH_PORT); \
+	fi
+
 # PHP & Development
 php:
 	@bash install.sh php
@@ -86,6 +97,12 @@ lazydocker:
 	@bash install.sh lazydocker
 
 # Global Dev Environment
+zsh-global:
+	@sudo bash install.sh zsh_global
+
+zsh-global-force:
+	@sudo bash install.sh zsh_global --force
+
 global-dev:
 	@sudo bash install.sh global_dev
 
@@ -138,9 +155,12 @@ s: setup
 sp: ssh-port
 st: ssh-timeout
 hn: hostname
+ufw: ufw-setup
 p: php
 pe: php-ext
 ld: lazydocker
+zg: zsh-global
+zgf: zsh-global-force
 gd: global-dev
 gdf: global-dev-force
 au: add-user
@@ -157,9 +177,12 @@ shortcuts:
 	@echo "  sp  = ssh-port"
 	@echo "  st  = ssh-timeout"
 	@echo "  hn  = hostname"
+	@echo "  ufw = ufw-setup"
 	@echo "  p   = php"
 	@echo "  pe  = php-ext"
 	@echo "  ld  = lazydocker"
+	@echo "  zg  = zsh-global"
+	@echo "  zgf = zsh-global-force"
 	@echo "  gd  = global-dev"
 	@echo "  gdf = global-dev-force"
 	@echo "  au  = add-user"
@@ -173,7 +196,9 @@ shortcuts:
 	@echo "  make s"
 	@echo "  make sp PORT=19742"
 	@echo "  make hn NAME=myserver"
+	@echo "  make ufw SSH_PORT=19742"
 	@echo "  make pe VER=8.4"
+	@echo "  make zgf"
 	@echo "  make gdf"
 	@echo "  make au USER=john"
 	@echo "  make zc IP=192.168.1.100"
@@ -255,4 +280,3 @@ test-nvm:
 test-all: test-ssh test-zabbix test-nvm
 	@echo ""
 	@echo "✓ All tests complete"
-

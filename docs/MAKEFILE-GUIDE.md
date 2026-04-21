@@ -41,8 +41,9 @@ make update
 | `make setup` | Setup the server | `make setup` |
 | `make ssh-port PORT=XXXX` | Change SSH port | `make ssh-port PORT=19742` |
 | `make ssh-timeout` | Configure SSH timeout | `make ssh-timeout` |
+| `make ufw-setup SSH_PORT=XXXX` | Install/configure UFW | `make ufw-setup SSH_PORT=19742` |
 
-**Shortcuts:** `make s`, `make sp PORT=XXXX`, `make st`
+**Shortcuts:** `make s`, `make sp PORT=XXXX`, `make st`, `make ufw SSH_PORT=XXXX`
 
 ---
 
@@ -64,10 +65,12 @@ make update
 |---------|-------------|---------|
 | `make global-dev` | Setup NVM, NPM, Yarn, ZSH globally | `make global-dev` |
 | `make global-dev-force` | Force update for all users | `make global-dev-force` |
+| `make zsh-global` | Setup only ZSH globally | `make zsh-global` |
+| `make zsh-global-force` | Force update ZSH dotfiles for all users | `make zsh-global-force` |
 | `make add-user USER=name` | Add user to developers group | `make add-user USER=john` |
 | `make add-user-all` | Add all users to group | `make add-user-all` |
 
-**Shortcuts:** `make gd`, `make gdf`, `make au USER=john`, `make aua`
+**Shortcuts:** `make gd`, `make gdf`, `make zg`, `make zgf`, `make au USER=john`, `make aua`
 
 ---
 
@@ -109,6 +112,9 @@ make ssh-timeout
 
 # 4. Change SSH port
 make ssh-port PORT=19742
+
+# 5. Setup firewall
+make ufw-setup SSH_PORT=19742
 ```
 
 ### Development Environment
@@ -116,6 +122,9 @@ make ssh-port PORT=19742
 ```bash
 # Install global dev tools
 make global-dev
+
+# Install only ZSH global
+make zsh-global
 
 # Add current user to developers group (already done by global-dev)
 # Add additional users
@@ -175,6 +184,8 @@ make pe VER=8.4         # instead of: make php-ext VER=8.4
 # Dev environment
 make gd                  # instead of: make global-dev
 make gdf                 # instead of: make global-dev-force
+make zg                  # instead of: make zsh-global
+make zgf                 # instead of: make zsh-global-force
 make au USER=john        # instead of: make add-user USER=john
 
 # Zabbix
@@ -250,6 +261,9 @@ You can pass variables to make commands:
 # SSH port
 make ssh-port PORT=19742
 
+# UFW SSH port
+make ufw-setup SSH_PORT=19742
+
 # PHP version
 make php-ext VER=8.4
 
@@ -279,7 +293,9 @@ make add-user-all
 |------|---------------|----------|
 | Setup | `bash install.sh setup` | `make setup` or `make s` |
 | Change SSH port | `bash install.sh ssh_port 19742` | `make ssh-port PORT=19742` or `make sp PORT=19742` |
+| Setup UFW | `sudo bash install.sh ufw_setup 19742` | `make ufw-setup SSH_PORT=19742` or `make ufw SSH_PORT=19742` |
 | Install PHP ext | `bash install.sh php_extension 8.4` | `make php-ext VER=8.4` or `make pe VER=8.4` |
+| ZSH global only | `sudo bash install.sh zsh_global` | `make zsh-global` or `make zg` |
 | Global dev | `sudo bash install.sh global_dev` | `make global-dev` or `make gd` |
 | Add user | `sudo bash install.sh add_dev_user john` | `make add-user USER=john` or `make au USER=john` |
 | Zabbix client | `sudo bash install.sh zabbix_client 192.168.1.100` | `make zabbix-client IP=192.168.1.100` or `make zc IP=192.168.1.100` |
@@ -379,6 +395,8 @@ All commands have short versions:
 - `s` = setup
 - `sp` = ssh-port
 - `st` = ssh-timeout
+- `ufw` = ufw-setup
+- `zg` = zsh-global
 - `gd` = global-dev
 - `zc` = zabbix-client
 - etc.
@@ -420,4 +438,3 @@ make au USER=john
 ```
 
 Enjoy the simplified workflow! 🎉
-
