@@ -41,9 +41,10 @@ make update
 | `make setup` | Setup the server | `make setup` |
 | `make ssh-port PORT=XXXX` | Change SSH port | `make ssh-port PORT=19742` |
 | `make ssh-timeout` | Configure SSH timeout | `make ssh-timeout` |
+| `make ssh-no-password` | Disable SSH password login | `make ssh-no-password` |
 | `make ufw-setup SSH_PORT=XXXX` | Install/configure UFW | `make ufw-setup SSH_PORT=19742` |
 
-**Shortcuts:** `make s`, `make sp PORT=XXXX`, `make st`, `make ufw SSH_PORT=XXXX`
+**Shortcuts:** `make s`, `make sp PORT=XXXX`, `make st`, `make snp`, `make ufw SSH_PORT=XXXX`
 
 ---
 
@@ -113,7 +114,10 @@ make ssh-timeout
 # 4. Change SSH port
 make ssh-port PORT=19742
 
-# 5. Setup firewall
+# 5. Disable SSH password login
+make ssh-no-password
+
+# 6. Setup firewall
 make ufw-setup SSH_PORT=19742
 ```
 
@@ -176,6 +180,7 @@ make s                    # instead of: make setup
 # SSH
 make sp PORT=19742       # instead of: make ssh-port PORT=19742
 make st                  # instead of: make ssh-timeout
+make snp                 # instead of: make ssh-no-password
 
 # PHP
 make p                   # instead of: make php
@@ -293,6 +298,7 @@ make add-user-all
 |------|---------------|----------|
 | Setup | `bash install.sh setup` | `make setup` or `make s` |
 | Change SSH port | `bash install.sh ssh_port 19742` | `make ssh-port PORT=19742` or `make sp PORT=19742` |
+| Disable SSH password login | `sudo bash install.sh ssh_no_password` | `make ssh-no-password` or `make snp` |
 | Setup UFW | `sudo bash install.sh ufw_setup 19742` | `make ufw-setup SSH_PORT=19742` or `make ufw SSH_PORT=19742` |
 | Install PHP ext | `bash install.sh php_extension 8.4` | `make php-ext VER=8.4` or `make pe VER=8.4` |
 | ZSH global only | `sudo bash install.sh zsh_global` | `make zsh-global` or `make zg` |
@@ -395,6 +401,7 @@ All commands have short versions:
 - `s` = setup
 - `sp` = ssh-port
 - `st` = ssh-timeout
+- `snp` = ssh-no-password
 - `ufw` = ufw-setup
 - `zg` = zsh-global
 - `gd` = global-dev

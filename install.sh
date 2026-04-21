@@ -36,6 +36,11 @@ ssh_timeout() {
     bash ssh_timeout.sh
 }
 
+disable_ssh_password_login() {
+    cd "$CURRENT_DIR/setup/system" || exit
+    sudo bash disable-ssh-password-login.sh
+}
+
 php() {
     cd "$CURRENT_DIR/setup/develop/web/php" || exit
     bash php-handler.sh
@@ -127,6 +132,7 @@ usage() {
     echo '  setup           Show welcome message'
     echo '  ssh_port        Change ssh port'
     echo '  ssh_timeout     Configure SSH timeout (auto disconnect after 5min idle)'
+    echo '  ssh_no_password Disable SSH password login (key-only)'
     echo '  php             Install php'
     echo '  php_extension   Install php extension'
     echo '  lazydocker      Install lazydocker'
@@ -173,6 +179,7 @@ usage() {
     echo "  bash $0 setup"
     echo "  bash $0 ssh_port 12345"
     echo "  bash $0 ssh_timeout"
+    echo "  bash $0 ssh_no_password"
     echo "  bash $0 php"
     echo "  bash $0 php_extension 8.4"
     echo "  bash $0 lazydocker"
@@ -208,6 +215,10 @@ case "${1:-}" in
 
     ssh_timeout | st)
         ssh_timeout
+        ;;
+
+    ssh_no_password | snp)
+        disable_ssh_password_login
         ;;
 
     php | php-install)

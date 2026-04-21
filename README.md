@@ -55,6 +55,7 @@ make s
 | `make setup` | Setup the server | `make s` |
 | `make ssh-port PORT=XXXX` | Change SSH port | `make sp PORT=XXXX` |
 | `make ssh-timeout` | Configure SSH timeout | `make st` |
+| `make ssh-no-password` | Disable SSH password login | `make snp` |
 | `make ufw-setup SSH_PORT=XXXX` | Install/configure UFW | `make ufw SSH_PORT=XXXX` |
 | `make php` | Install PHP | `make p` |
 | `make php-ext VER=X.X` | Install PHP extensions | `make pe VER=X.X` |
@@ -69,6 +70,7 @@ make s
 ```bash
 make setup
 make ssh-port PORT=19742
+make ssh-no-password
 make ufw-setup SSH_PORT=19742
 make zsh-global
 make global-dev
@@ -87,6 +89,7 @@ The runner has the following commands:
 | `setup`, `s`, `a`         | Setup the server                                        |
 | `ssh_port`, `sp`          | Change the SSH port                                     |
 | `ssh_timeout`, `st`       | Configure SSH timeout (auto disconnect after 5min idle) |
+| `ssh_no_password`, `snp`  | Disable SSH password login (key-only)                  |
 | `ufw_setup`, `ufw`        | Install and configure UFW firewall                      |
 | `php`, `php-install`      | Install PHP version you want                            |
 | `php_extension`, `pe`     | Install PHP extensions                                  |

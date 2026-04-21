@@ -1,7 +1,7 @@
 # Makefile for dotfiles_server
 # Quick shortcuts for all installation commands
 
-.PHONY: help setup ssh-port ssh-timeout hostname ufw-setup php php-ext lazydocker \
+.PHONY: help setup ssh-port ssh-timeout ssh-no-password hostname ufw-setup php php-ext lazydocker \
         zsh-global zsh-global-force global-dev add-user zabbix-server \
         zabbix-client update-zabbix-ip fix-mysql clean
 
@@ -17,6 +17,7 @@ help:
 	@echo "  make setup                - Setup the server"
 	@echo "  make ssh-port PORT=XXXX   - Change SSH port (default: 22)"
 	@echo "  make ssh-timeout          - Configure SSH timeout (5min auto-disconnect)"
+	@echo "  make ssh-no-password      - Disable SSH password login (key-only)"
 	@echo "  make hostname NAME=server - Change system hostname"
 	@echo "  make ufw-setup SSH_PORT=XXXX - Install & configure UFW firewall"
 	@echo ""
@@ -44,6 +45,7 @@ help:
 	@echo "Examples:"
 	@echo "  make setup"
 	@echo "  make ssh-port PORT=19742"
+	@echo "  make ssh-no-password"
 	@echo "  make hostname NAME=myserver"
 	@echo "  make ufw-setup SSH_PORT=19742"
 	@echo "  make php-ext VER=8.4"
@@ -67,6 +69,9 @@ ssh-port:
 
 ssh-timeout:
 	@bash install.sh ssh_timeout
+
+ssh-no-password:
+	@sudo bash install.sh ssh_no_password
 
 hostname:
 	@if [ -z "$(NAME)" ]; then \
@@ -154,6 +159,7 @@ clean:
 s: setup
 sp: ssh-port
 st: ssh-timeout
+snp: ssh-no-password
 hn: hostname
 ufw: ufw-setup
 p: php
@@ -176,6 +182,7 @@ shortcuts:
 	@echo "  s   = setup"
 	@echo "  sp  = ssh-port"
 	@echo "  st  = ssh-timeout"
+	@echo "  snp = ssh-no-password"
 	@echo "  hn  = hostname"
 	@echo "  ufw = ufw-setup"
 	@echo "  p   = php"
@@ -195,6 +202,7 @@ shortcuts:
 	@echo "Examples:"
 	@echo "  make s"
 	@echo "  make sp PORT=19742"
+	@echo "  make snp"
 	@echo "  make hn NAME=myserver"
 	@echo "  make ufw SSH_PORT=19742"
 	@echo "  make pe VER=8.4"
