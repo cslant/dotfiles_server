@@ -12,7 +12,7 @@ if [ "" = "$PKG_OK" ] || [ "true" = "$FORCE_ZSH" ]; then
     # start ====== oh-my-zsh
     git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
     # Fast Syntax Highlighting
-    git clone https://github.com/zdharma/fast-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/fast-syntax-highlighting
+    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/fast-syntax-highlighting
     # ZSH Autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
     # p10k theme
